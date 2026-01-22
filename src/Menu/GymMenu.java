@@ -1,21 +1,16 @@
 package Menu;
-
 import Member.StudentMember;
 import Member.VIPMember;
 import Member.Member;
+
 import java.util.ArrayList;
 import java.util.Scanner;
-
-public class GymMenu implements Menu {
-
-    private ArrayList<Member> members;
+public class GymMenu implements Menu{
+    private ArrayList<Member>members;
     private Scanner scanner;
-
-    public GymMenu() {
+    public GymMenu(){
         this.members = new ArrayList<>();
         this.scanner = new Scanner(System.in);
-
-
         members.add(new StudentMember("Aruzhan", 17, "87716664253", 10));
         members.add(new VIPMember("Dana", 26, "87007654321", "Boxing"));
     }
@@ -75,28 +70,22 @@ public class GymMenu implements Menu {
         }
     }
     private void addStudentMember() {
-        try {
-            System.out.print("Enter Name: ");
+        try{
+            System.out.println("Enter name: ");
             String name = scanner.nextLine();
-
-            System.out.print("Enter Age: ");
+            System.out.println("Enter age: ");
             int age = scanner.nextInt();
             scanner.nextLine();
-
-            System.out.print("Enter Phone: ");
+            System.out.println("Enter phone");
             String phone = scanner.nextLine();
-
-            System.out.print("Enter Discount (%): ");
-            double discount = scanner.nextDouble();
+            System.out.println("Ented discount");
+            Double discount = scanner.nextDouble();
             scanner.nextLine();
-
             StudentMember student = new StudentMember(name, age, phone, discount);
             members.add(student);
-
-            System.out.println("Student Member added!");
-
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("New student member is added");
+        } catch (IllegalArgumentException e){
+            System.out.println("Error" + e.getMessage());
         }
     }
     private void addVIPMember() {
