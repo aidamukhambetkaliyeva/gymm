@@ -1,16 +1,24 @@
 package Menu;
+
+import Database.MemberDAO;
 import Member.StudentMember;
 import Member.VIPMember;
 import Member.Member;
-
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-public class GymMenu implements Menu{
-    private ArrayList<Member>members;
+
+public class GymMenu implements Menu {
+
+    private ArrayList<Member> members; // оставляем для добавления новых
     private Scanner scanner;
-    public GymMenu(){
+    private MemberDAO dao;
+
+    public GymMenu() {
         this.members = new ArrayList<>();
         this.scanner = new Scanner(System.in);
+        this.dao = new MemberDAO();
+
         members.add(new StudentMember("Aruzhan", 17, "87716664253", 10));
         members.add(new VIPMember("Dana", 26, "87007654321", "Boxing"));
     }
@@ -24,6 +32,8 @@ public class GymMenu implements Menu{
         System.out.println("2. Add VIP Member");
         System.out.println("3. View All Members");
         System.out.println("4. Demonstrate Training");
+        System.out.println("5. Update Information");
+        System.out.println("6. Delete Member");
         System.out.println("0. Exit");
         System.out.println("========================================");
     }
@@ -45,6 +55,8 @@ public class GymMenu implements Menu{
                     case 2 -> addVIPMember();
                     case 3 -> showAllMembers();
                     case 4 -> demonstrateTraining();
+                    case 5 -> updateMember();
+                    case 6 -> deleteMember();
                     case 0 -> running = false;
                     default -> System.out.println("Invalid option!");
                 }
@@ -59,35 +71,37 @@ public class GymMenu implements Menu{
     }
 
     private void showAllMembers() {
-        if (members.isEmpty()) {
-            System.out.println("No members yet!");
-            return;
-        }
-
         System.out.println("\n--- All Fitness Club Members ---");
         for (Member m : members) {
             System.out.println(m);
         }
     }
+
     private void addStudentMember() {
-        try{
-            System.out.println("Enter name: ");
+        try {
+            System.out.print("Enter Name: ");
             String name = scanner.nextLine();
-            System.out.println("Enter age: ");
+
+            System.out.print("Enter Age: ");
             int age = scanner.nextInt();
             scanner.nextLine();
-            System.out.println("Enter phone");
+
+            System.out.print("Enter Phone: ");
             String phone = scanner.nextLine();
-            System.out.println("Ented discount");
-            Double discount = scanner.nextDouble();
+
+            System.out.print("Enter Discount (%): ");
+            double discount = scanner.nextDouble();
             scanner.nextLine();
+
             StudentMember student = new StudentMember(name, age, phone, discount);
             members.add(student);
-            System.out.println("New student member is added");
-        } catch (IllegalArgumentException e){
-            System.out.println("Error" + e.getMessage());
+
+            System.out.println("Student Member added!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
+
     private void addVIPMember() {
         try {
             System.out.print("Enter Name: ");
@@ -104,10 +118,9 @@ public class GymMenu implements Menu{
             String spec = scanner.nextLine();
 
             VIPMember vip = new VIPMember(name, age, phone, spec);
-            members.add(vip);
+            members.add(vip); // всё ещё добавляем в ArrayList
 
             System.out.println("VIP Member added!");
-
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -124,14 +137,52 @@ public class GymMenu implements Menu{
             m.work();
         }
     }
+
+    private void updateMember() {
+        System.out.print("Enter Member ID to update: ");
+        int memberId = scanner.nextInt();
+        scanner.nextLine();
+
+        Member member = dao.getMemberById(memberId);
+        if (member == null) {
+            System.out.println("No member found with ID: " + memberId);
+            return;
+        }
+
+        System.out.println("Member found:");
+        System.out.println(member);
+
+        System.out.print("New Name [" + member.getName() + "]: ");
+        String newName = scanner.nextLine();
+        if (!newName.trim().isEmpty()) member.setName(newName);
+
+        System.out.print("New Phone [" + member.getPhone() + "]: ");
+        String newPhone = scanner.nextLine();
+        if (!newPhone.trim().isEmpty()) member.setPhone(newPhone);
+
+        dao.updateMember(member, memberId);
+    }
+
+    private void deleteMember() {
+        System.out.print("Enter Member ID to delete: ");
+        int memberId = scanner.nextInt();
+        scanner.nextLine();
+
+        Member member = dao.getMemberById(memberId);
+        if (member == null) {
+            System.out.println("No member found with ID: " + memberId);
+            return;
+        }
+
+        System.out.println("Member to delete:");
+        System.out.println(member);
+
+        System.out.print("Are you sure? (yes/no): ");
+        String confirmation = scanner.nextLine();
+        if (confirmation.equalsIgnoreCase("yes")) {
+            dao.deleteMember(memberId);
+        } else {
+            System.out.println("Deletion cancelled.");
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-

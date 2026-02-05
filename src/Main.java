@@ -1,3 +1,6 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+
 import Menu.GymMenu;
 
 public class Main {
